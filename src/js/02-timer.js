@@ -2,16 +2,16 @@ import flatpickr from "flatpickr";
 import "flatpickr/dist/flatpickr.min.css";
 
 const refs = {
-  startBtn: document.querySelector('data-start'),
   timeface: document.querySelector('#datetime-picker'),
-  textDays: document.querySelector('[data-days]'),
-  textHours: document.querySelector('[data-hours]'),
-  textMinutes: document.querySelector('[data-minutes]'),
-  textSeconds: document.querySelector('[data-seconds]'),
+  start: document.querySelector('[data-start]'),
+  days: document.querySelector('[data-days]'),
+  hours: document.querySelector('[data-hours]'),
+  minutes: document.querySelector('[data-minutes]'),
+  seconds: document.querySelector('[data-seconds]'),
 };
+
 let selectedTime = null;
 
-// Ініціалізуємо бібліотеку на елементі input[type="text"]:
 const options = {
   enableTime: true,
   time_24hr: true,
@@ -21,10 +21,10 @@ const options = {
     const currentDay = new Date();
     if (selectedDates[0] < currentDay) {
       alert("Please choose a date in the future");
-      refs.startBtn.disabled = true;
+      refs.start.disabled = true;
       selectedDates[0] = new Date();
     } else {
-      refs.startBtn.disabled = false;
+      refs.start.disabled = false;
       selectedTime = selectedDates[0];
     };
   },
@@ -33,34 +33,27 @@ const options = {
 const calendar = flatpickr('#datetime-picker', options);
 
 const timer = {
- 
   start() {
     const andDate = calendar.selectedDates[0];
     
-    intervalID = setInterval(() => {
+    intervalId = setInterval(() => {
       const currentDate = Date.now();
       const deltaTime = andDate - currentDate;
-      const timeComponents = convertMs(deltaTime);
-      updateTimeface(timeComponents);
-      console.log(`$(days):$(hours):$(minutes):$(seconds)`);
-    }, 1000);
-  }, 
+     
+      const { days, hours, minutes, seconds } = convertMs(deltaTime);
+      updateTimeface({ days, hours, minutes, seconds });
+      console.log(`${days}:${hours}:${minutes}:${seconds}`);
 
-  stop() {
-    if(deltaTime < 1000) {
-      clearInterval(intervalID);
-    }
-  }
+      if (deltaTime < 1000) {
+        return clearInterval(intervalId);
+      }
+    }, 1000);
+  },
 } 
 
-refs.startBtn.addEventListener('click', () => {
+refs.start.addEventListener('click', () => {
   timer.start();
 })
-
-// В інтерфейсі таймера необхідно додавати 0, якщо в числі менше двох символів.
-function addLeadingZero(value) {
-    return String(value).padStart(2, '0');
-}
 
 function convertMs(ms) {
   const second = 1000;
@@ -75,14 +68,18 @@ function convertMs(ms) {
 
   return { days, hours, minutes, seconds };
 }
- 
+
+function addLeadingZero(value) {
+    return String(value).padStart(2, '0');
+}
+
 function updateTimeface({ days, hours, minutes, seconds }) {
-  refs.textDays.textContent = `${days}`;
-  refs.textHours.textContent = `${hours}`;
-  refs.textMinutes.textContent = `${minutes}`;
-  refs.textSeconds.textContent = `${seconds}`;
+  refs.days.textContent = `${days}`;
+  refs.hours.textContent = `${hours}`;
+  refs.minutes.textContent = `${minutes}`;
+  refs.seconds.textContent = `${seconds}`;
 };
 
-// updateTimeface();
+
 
 
