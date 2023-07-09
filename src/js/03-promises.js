@@ -1,39 +1,48 @@
-const bodyRef = document.querySelector('body');
-const formRef = document.querySelector('form');
-const inputsRef = document.querySelectorAll('input');
-const btnCreatePromise = document.querySelector('button');
-const delay = inputsRef[0];
-const step = inputsRef[1];
-const amount = inputsRef[2];
+import Notiflix from 'notiflix';
 
-function createPromise(position, delay) {
-  return new Promise((resolve, reject) => {
-    const shouldResolve = Math.random() > 0.3;
-
-    setTimeout(() => {
-      if (shouldResolve) {
-        // Fulfill
-        resolve({ position, delay });
-      } else {
-        // Reject
-        reject({ position, delay });
-      }
-    }, `${delay}`);
-  });
+const refs = {
+  form: document.querySelector('.form'),
+  delay: document.querySelector('[name="delay"]'),
+  step: document.querySelector('[name="step"]'),
+  amount: document.querySelector('[name="amount"]'),
 };
 
-btnCreatePromise.addEventListener('submit', (event) => {
-  event.preventDefault();
-  for (let i = 0; i <= amount - 1; i += 1) {
-    console.log(delay, step, amount);
 
-    createPromise(i, delay)
-  .then(({ position, delay }) => {
-    console.log(`✅ Fulfilled promise ${position} in ${delay}ms`);
+function createPromise(position, delay) {
+  const shouldResolve = Math.random() > 0.3;
+  return new Promise((resolve, reject) => {
+   setTimeout(() => {
+      if (shouldResolve) {
+        resolve({ position, delay });
+      } else {
+        reject({ position, delay });
+      }
+    }, delay);
   })
-  .catch(({ position, delay }) => {
-    console.log(`❌ Rejected promise ${position} in ${delay}ms`);
-  });
-   delay += step;
-  }
-});
+    .then(({ position, delay }) => {
+     Notiflix.Notify.success(`✅ Fulfilled promise ${position} in ${delay}ms`);
+     return { position, delay };
+    })
+    .catch(({ position, delay }) => {
+      Notiflix.Notify.failure(`❌ Rejected promise ${position} in ${delay}ms`);
+    });
+};
+
+const promisificator = (delay, step, amount) => {
+  let stepDelay = 0;
+  for (let i = 1; i <= amount; i += 1) {
+    stepDelay += step;
+    createPromise(i, stepDelay);
+  };
+};
+
+refs.form.addEventListener('submit', onSubmit);
+
+function onSubmit (evt) {
+  evt.preventDefault();
+  promisificator(Number(refs.delay.value),
+    Number(refs.step.value),
+    Number(refs.amount.value))
+}
+
+
