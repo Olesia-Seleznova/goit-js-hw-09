@@ -33,11 +33,12 @@ const options = {
 const calendar = flatpickr('#datetime-picker', options);
 
 const timer = {
+
   start() {
       if (selectedTime === null) {
         return;
     };
-    
+
     const andDate = calendar.selectedDates[0];
         
     intervalId = setInterval(() => {
@@ -69,15 +70,15 @@ function convertMs(ms) {
   const seconds = addLeadingZero(Math.floor((((ms % day) % hour) % minute) / second));
 
   return { days, hours, minutes, seconds };
-}
+};
 
 function addLeadingZero(value) {
     return String(value).padStart(2, '0');
-}
+};
 
 function updateTimeface({ days, hours, minutes, seconds }) {
   refs.days.textContent = `${days}`;
   refs.hours.textContent = `${hours}`;
   refs.minutes.textContent = `${minutes}`;
   refs.seconds.textContent = `${seconds}`;
-};
+}
