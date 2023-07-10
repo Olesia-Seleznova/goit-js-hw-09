@@ -2,7 +2,7 @@ import flatpickr from "flatpickr";
 import "flatpickr/dist/flatpickr.min.css";
 
 const refs = {
-  timeface: document.querySelector('#datetime-picker'),
+  input: document.querySelector('#datetime-picker'),
   start: document.querySelector('[data-start]'),
   days: document.querySelector('[data-days]'),
   hours: document.querySelector('[data-hours]'),
@@ -17,12 +17,12 @@ const options = {
   time_24hr: true,
   defaultDate: new Date(),
   minuteIncrement: 1,
+
   onClose(selectedDates) {
-    const currentDay = new Date();
+    const currentDay = Date.now();
     if (selectedDates[0] < currentDay) {
       alert("Please choose a date in the future");
       refs.start.disabled = true;
-      selectedDates[0] = new Date();
     } else {
       refs.start.disabled = false;
       selectedTime = selectedDates[0];
@@ -34,26 +34,28 @@ const calendar = flatpickr('#datetime-picker', options);
 
 const timer = {
   start() {
-    const andDate = calendar.selectedDates[0];
+      if (selectedTime === null) {
+        return;
+    };
     
+    const andDate = calendar.selectedDates[0];
+        
     intervalId = setInterval(() => {
       const currentDate = Date.now();
       const deltaTime = andDate - currentDate;
-     
-      const { days, hours, minutes, seconds } = convertMs(deltaTime);
-      updateTimeface({ days, hours, minutes, seconds });
-      console.log(`${days}:${hours}:${minutes}:${seconds}`);
+      const time = convertMs(deltaTime);
+      updateTimeface(time);
 
       if (deltaTime < 1000) {
         return clearInterval(intervalId);
-      }
+      };
     }, 1000);
   },
-} 
+};
 
 refs.start.addEventListener('click', () => {
   timer.start();
-})
+});
 
 function convertMs(ms) {
   const second = 1000;
@@ -79,7 +81,3 @@ function updateTimeface({ days, hours, minutes, seconds }) {
   refs.minutes.textContent = `${minutes}`;
   refs.seconds.textContent = `${seconds}`;
 };
-
-
-
-
