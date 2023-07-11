@@ -1,6 +1,6 @@
 import Notiflix from 'notiflix';
 
-const formRef =  document.querySelector('.form');
+const formRef = document.querySelector('.form');
 
 function createPromise(position, delay) {
   const shouldResolve = Math.random() > 0.3;
@@ -34,9 +34,8 @@ formRef.addEventListener('submit', onSubmit);
 
 function onSubmit (evt) {
   evt.preventDefault();
-  promisificator(Number(refs.delay.value),
-    Number(refs.step.value),
-    Number(refs.amount.value))
+  promisificator(
+    Number(formRef.delay.value),
+    Number(formRef.step.value),
+    Number(formRef.amount.value))
 }
-
-
